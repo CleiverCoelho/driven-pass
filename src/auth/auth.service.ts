@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
 
-  private EXPIRATION_TIME = "7 days";
+  private EXPIRATION_TIME = "2 days";
   private ISSUER = "Driven";
   private AUDIENCE = "users";
 

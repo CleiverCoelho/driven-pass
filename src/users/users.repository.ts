@@ -9,7 +9,10 @@ export class UsersRepository {
   private SALT = 10;
   constructor(private readonly prisma: PrismaService) { }
 
-  create(userDto: CreateUserDto) {
+  async create(userDto: CreateUserDto) {
+    console.log(await this.prisma.credential.findMany({
+    }))
+
     return this.prisma.user.create({
       data: {
         ...userDto,
