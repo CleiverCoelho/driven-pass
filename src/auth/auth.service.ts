@@ -22,8 +22,8 @@ export class AuthService {
   }
 
   async signIn(signInDto: SignInDto) {
-    const { username, password } = signInDto;
-    const user = await this.userService.getUserByUsername(username);
+    const { email, password } = signInDto;
+    const user = await this.userService.getUserByEmail(email);
     if (!user) throw new UnauthorizedException("Email or password not valid.");
 
     const valid = await bcrypt.compare(password, user.password);
@@ -34,10 +34,9 @@ export class AuthService {
   }
 
   createToken(user: User) {
-    const { id, username } = user;
-    //const token = this.jwtService.sign({username, id}); // quero fazer sem nada opcional
+    const { id, email } = user;
 
-    const token = this.jwtService.sign({ username }, { // payload => "corpo do jwt" [OBRIGATORIO]
+    const token = this.jwtService.sign({ email }, { // payload => "corpo do jwt" [OBRIGATORIO]
       expiresIn: this.EXPIRATION_TIME, // por quanto tempo isso aqui é válido? [OPT]
       subject: String(id), // de quem é esse token? id [OPT]
       issuer: this.ISSUER, // quem tá emitindo esse token lindão? // driven [OPT]

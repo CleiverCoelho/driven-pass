@@ -7,9 +7,9 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) { }
 
   async create(userDto: CreateUserDto) {
-    const { username } = userDto;
-    const user = await this.usersRepository.getUserByUsername(username);
-    if (user) throw new ConflictException("Username already in use.");
+    const { email } = userDto;
+    const user = await this.usersRepository.getUserByEmail(email);
+    if (user) throw new ConflictException("Email already in use.");
 
     return await this.usersRepository.create(userDto);
   }
@@ -21,7 +21,7 @@ export class UsersService {
     return user;
   }
 
-  async getUserByUsername(username: string) {
-    return await this.usersRepository.getUserByUsername(username);
+  async getUserByEmail(email: string) {
+    return await this.usersRepository.getUserByEmail(email);
   }
 }

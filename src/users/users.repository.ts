@@ -24,9 +24,9 @@ export class UsersRepository {
     })
   }
 
-  getUserByUsername(username: string) {
+  getUserByEmail(email: string) {
     return this.prisma.user.findFirst({
-      where: { username }
+      where: { email }
     })
   }
 }
