@@ -17,6 +17,11 @@ export class CredentialsRepository {
                 user : {
                     connect: user
                 }
+            },
+            select: {
+                password: false,
+                title: true,
+                username: true
             }
         })
     }

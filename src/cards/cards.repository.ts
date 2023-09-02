@@ -30,7 +30,12 @@ export class CardsRepository{
                 user : {
                     connect: user
                 }
-            }
+            },
+            select: {
+                password: false,
+                title: true,
+                type: true,
+                number: true            }
         })
     }
 
