@@ -25,8 +25,9 @@ export class NotesController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.notesService.findOne(+id);
+  findOne(@Param('id') id: string, @User() user: UserPrisma) {
+    const userId = user.id;
+    return this.notesService.findOne(+id, userId);
   }
 
   @Delete(':id')
