@@ -18,8 +18,8 @@ export class NotesService {
     return await this.notesRepository.create(user, createNoteDto);
   }
 
-  findAll() {
-    return `This action returns all notes`;
+  async findAll(id: number) {
+    return await this.notesRepository.findAll(id);
   }
 
   findOne(id: number) {
