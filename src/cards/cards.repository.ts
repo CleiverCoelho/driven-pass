@@ -48,13 +48,13 @@ export class CardsRepository{
     }
 
     async findAll(userId : number) {
-        return await this.prisma.note.findMany({
+        return await this.prisma.card.findMany({
             where: { userId }
         })
     }
 
     async findOne(id: number) {
-        return await this.prisma.note.findFirst({
+        return await this.prisma.card.findFirst({
             where: { id }
         })
     }

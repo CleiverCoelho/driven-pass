@@ -17,21 +17,20 @@ export class CardsController {
   }
 
   @Get()
-  findAll() {
-    return this.cardsService.findAll();
+  @UseGuards(AuthGuard)
+  findAll(@User() user : UserPrisma) {
+    const { id } = user;
+    return this.cardsService.findAll(id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cardsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
-    return this.cardsService.update(+id, updateCardDto);
+  @UseGuards(AuthGuard)
+  findOne(@Param('id') id: string, @User() user : UserPrisma) {
+    return this.cardsService.findOne(+id, user);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.cardsService.remove(+id);
   }

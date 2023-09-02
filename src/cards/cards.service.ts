@@ -29,12 +29,16 @@ export class CardsService {
     return await this.cardsRepository.create(user, { ...createCardDto, password })
   }
 
-  findAll() {
-    return `This action returns all cards`;
+  async findAll(userId: number) {
+    const cryptrCards = await this.cardsRepository.findAll(userId);
+    const decryptrCards = cryptrCards.map((card) => {
+      return {...card, password: this.cryptr.decrypt(card.password)}
+    })
+    return decryptrCards;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} card`;
+  async findOne(id: number, user: User) {
+    const card = await this.cardsRepository.findOne(id);
   }
 
   update(id: number, updateCardDto: UpdateCardDto) {
