@@ -17,8 +17,9 @@ export class CredentialsController {
   }
 
   @Get()
-  findAll() {
-    return this.credentialsService.findAll();
+  @UseGuards(AuthGuard)
+  findAll(@User() user: UserPrisma) {
+    return this.credentialsService.findAll(user);
   }
 
   @Get(':id')

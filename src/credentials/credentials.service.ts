@@ -20,13 +20,22 @@ export class CredentialsService {
     const { id } = user;
     const checkForTitle = await this.credentialsRepository.getCredentialByTitle(title, id);
     if(checkForTitle) throw new ConflictException("Title is already used");
+    
     const cryptPassword = this.cryptr.encrypt(password);
     const createdRes = this.credentialsRepository.create(user, {...createCredentialDto, password: cryptPassword});
     return createdRes;
   }
 
-  findAll(user: User) {
-    return `This action returns all credentials`;
+  async findAll(user: User) {
+    const { id } = user;
+
+    const cryptrCredentials = await this.credentialsRepository.findAll(id);
+    const credentials = cryptrCredentials.map((credencial) => {
+      const password = this.cryptr.decrypt(credencial.password);
+      return {...credencial, password};
+    })
+
+    return credentials;
   }
 
   findOne(id: number) {
