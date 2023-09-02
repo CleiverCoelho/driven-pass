@@ -35,5 +35,11 @@ export class CredentialsRepository {
         })
     }
 
+    async findOne(id: number) {
+        return await this.prisma.credential.findFirst({
+            where: { id }
+        })
+    }
+
     
 }
