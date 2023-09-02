@@ -9,5 +9,6 @@ import { UsersModule } from 'src/users/users.module';
   imports: [AuthModule, UsersModule],
   controllers: [NotesController],
   providers: [NotesService, NotesRepository],
+  exports: [NotesService]
 })
 export class NotesModule {}

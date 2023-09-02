@@ -10,9 +10,6 @@ export class UsersRepository {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(userDto: CreateUserDto) {
-    console.log(await this.prisma.credential.findMany({
-    }))
-
     return this.prisma.user.create({
       data: {
         ...userDto,
@@ -30,6 +27,12 @@ export class UsersRepository {
   getUserByEmail(email: string) {
     return this.prisma.user.findFirst({
       where: { email }
+    })
+  }
+
+  async delete(id: number){
+    return await this.prisma.user.delete({
+      where: { id }
     })
   }
 }

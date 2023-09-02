@@ -1,8 +1,8 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
 import { User } from '@prisma/client';
 import { NotesRepository } from './notes.repository';
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class NotesService {
@@ -38,5 +38,12 @@ export class NotesService {
     if(note.userId !== userId) throw new ForbiddenException();
 
     return await this.notesRepository.delete(id);
+  }
+
+  async eraseAll(password: string, user: User){
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) throw new UnauthorizedException("Password not valid.");
+        
+    await this.notesRepository.eraseAll(user.id);
   }
 }

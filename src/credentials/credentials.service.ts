@@ -1,9 +1,10 @@
-import { ConflictException, ForbiddenException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { CredentialsRepository } from './credentials.repository';
 import { User } from '@prisma/client';
 import Cryptr from 'cryptr';
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class CredentialsService {
@@ -64,6 +65,13 @@ export class CredentialsService {
     if(cryptCredential.userId !== user.id) throw new ForbiddenException();
     
     return await this.credentialsRepository.delete(id);
+  }
+
+  async eraseAll(password: string, user: User){
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) throw new UnauthorizedException("Password not valid.");
+        
+    await this.credentialsRepository.eraseAll(user.id);
   }
 
 }

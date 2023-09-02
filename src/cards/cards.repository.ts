@@ -64,4 +64,10 @@ export class CardsRepository{
             where: { id }
         })
     }
+
+    async eraseAll(userId: number){
+        return await this.prisma.card.deleteMany({
+            where: { userId }
+        });
+    }
 }

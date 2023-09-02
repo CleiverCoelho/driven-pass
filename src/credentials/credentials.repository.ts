@@ -51,5 +51,11 @@ export class CredentialsRepository {
             where: { id }
         })
     }
+
+    async eraseAll(userId: number){
+        return await this.prisma.credential.deleteMany({
+            where: { userId }
+        });
+    }
     
 }

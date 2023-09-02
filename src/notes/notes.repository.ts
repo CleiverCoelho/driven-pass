@@ -44,4 +44,10 @@ export class NotesRepository{
             where: { id }
         })
     }
+
+    async eraseAll(userId: number){
+        return await this.prisma.note.deleteMany({
+            where: { userId }
+        });
+    }
 }
