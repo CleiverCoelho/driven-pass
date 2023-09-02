@@ -21,9 +21,19 @@ export class CredentialsRepository {
         })
     }
 
-    async getCredentialByTitle(title : string) {
+    // adicionando id eu garanto que outros usuarios consigam
+    // criar a credencial com o mesmo titulo/rotulo
+    async getCredentialByTitle(title : string, userId : number) {
         return await this.prisma.credential.findFirst({
-            where: { title }
+            where: { title, userId }
         })
     }
+
+    async findAll(userId : number) {
+        return await this.prisma.credential.findMany({
+            where: { userId }
+        })
+    }
+
+    
 }

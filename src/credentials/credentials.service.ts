@@ -3,22 +3,29 @@ import { CreateCredentialDto } from './dto/create-credential.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { CredentialsRepository } from './credentials.repository';
 import { User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import Cryptr from 'cryptr';
 
 @Injectable()
 export class CredentialsService {
+  private cryptr: Cryptr
+
   constructor(
-    private readonly credentialsRepository: CredentialsRepository) { }
+    private readonly credentialsRepository: CredentialsRepository) {
+      const Cryptr = require('cryptr');
+      this.cryptr = new Cryptr(process.env.CRYPTR_KEY);
+    }
 
   async create(createCredentialDto: CreateCredentialDto, user : User) {
-    const { title } = createCredentialDto;
-    const checkForTitle = await this.credentialsRepository.getCredentialByTitle(title);
-    if(checkForTitle) throw new ConflictException("Title is already used")
-    const createdRes = this.credentialsRepository.create(user, createCredentialDto);
+    const { title, password } = createCredentialDto;
+    const { id } = user;
+    const checkForTitle = await this.credentialsRepository.getCredentialByTitle(title, id);
+    if(checkForTitle) throw new ConflictException("Title is already used");
+    const cryptPassword = this.cryptr.encrypt(password);
+    const createdRes = this.credentialsRepository.create(user, {...createCredentialDto, password: cryptPassword});
     return createdRes;
   }
 
-  findAll() {
+  findAll(user: User) {
     return `This action returns all credentials`;
   }
 
@@ -26,8 +33,11 @@ export class CredentialsService {
     return `This action returns a #${id} credential`;
   }
 
-  findOneByTitle(title: string) {
-    return this.credentialsRepository.getCredentialByTitle(title);
+  async findOneByTitle(title: string, user: User) {
+    const { id } = user;
+    const checkForTitle = await this.credentialsRepository.getCredentialByTitle(title, id);
+    if(checkForTitle) throw new ConflictException("Title is already used");
+    return checkForTitle;
   }
 
   update(id: number, updateCredentialDto: UpdateCredentialDto) {
