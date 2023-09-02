@@ -31,11 +31,12 @@ export class NotesService {
     return note;
   }
 
-  update(id: number, updateNoteDto: UpdateNoteDto) {
-    return `This action updates a #${id} note`;
-  }
+  async remove(id: number, userId: number) {
+    const note =  await this.notesRepository.findOne(id);
+    
+    if(!note) throw new NotFoundException();
+    if(note.userId !== userId) throw new ForbiddenException();
 
-  remove(id: number) {
-    return `This action removes a #${id} note`;
+    return await this.notesRepository.delete(id);
   }
 }

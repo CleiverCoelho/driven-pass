@@ -32,7 +32,8 @@ export class NotesController {
 
   @Delete(':id')
   @UseGuards(AuthGuard)
-  remove(@Param('id') id: string) {
-    return this.notesService.remove(+id);
+  remove(@Param('id') id: string, @User() user: UserPrisma) {
+    const userId = user.id;
+    return this.notesService.remove(+id, userId);
   }
 }
