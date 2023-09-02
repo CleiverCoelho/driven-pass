@@ -60,7 +60,7 @@ export class CardsRepository{
     }
 
     async delete(id: number) {
-        return await this.prisma.note.delete({
+        return await this.prisma.card.delete({
             where: { id }
         })
     }

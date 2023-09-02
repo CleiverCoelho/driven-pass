@@ -31,7 +31,7 @@ export class CardsController {
 
   @Delete(':id')
   @UseGuards(AuthGuard)
-  remove(@Param('id') id: string) {
-    return this.cardsService.remove(+id);
+  remove(@Param('id') id: string, @User() user : UserPrisma) {
+    return this.cardsService.remove(+id, user);
   }
 }

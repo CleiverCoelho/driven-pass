@@ -45,11 +45,11 @@ export class CardsService {
     return {...card, password: this.cryptr.decrypt(card.password)};
   }
 
-  update(id: number, updateCardDto: UpdateCardDto) {
-    return `This action updates a #${id} card`;
-  }
+  async remove(id: number, user: User) {
+    const card = await this.cardsRepository.findOne(id);
+    if(!card) throw new NotFoundException();
+    if(card.userId !== user.id) throw new ForbiddenException();
 
-  remove(id: number) {
-    return `This action removes a #${id} card`;
+    return await this.cardsRepository.delete(id);
   }
 }
