@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { User } from '@prisma/client';
@@ -39,6 +39,10 @@ export class CardsService {
 
   async findOne(id: number, user: User) {
     const card = await this.cardsRepository.findOne(id);
+    if(!card) throw new NotFoundException();
+    if(card.userId !== user.id) throw new ForbiddenException();
+
+    return {...card, password: this.cryptr.decrypt(card.password)};
   }
 
   update(id: number, updateCardDto: UpdateCardDto) {
