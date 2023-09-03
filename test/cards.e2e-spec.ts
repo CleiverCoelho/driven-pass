@@ -215,8 +215,278 @@ describe('Cards E2E Tests', () => {
       .get('/cards')
       .auth(token, { type: "bearer" })
     
-    expect(status).toBe(HttpStatus.CONFLICT);
+    expect(status).toBe(HttpStatus.OK);
     expect(body).toHaveLength(1);
+  });
+
+  it("GET /cards/:id => should respond with the card for given cardId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const card = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .persist();
+
+    const cardBuilt = new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .build();
+
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .get(`/cards/${card.id}`)
+      .auth(token, { type: "bearer" })
+    
+    expect(status).toBe(HttpStatus.OK);
+    // com a senha descriptografada
+    expect(body).toEqual({...cardBuilt, id: card.id, userId: user.id});
+  });
+
+  it("GET /cards/:id => should respond with status 403 for others user cardId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const user2 = await new Userfactory(prisma)
+      .withEmail("teste2@teste2.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const card = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .persist();
+
+    const cardBuilt = new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .build();
+  
+    const card2 = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user2.id)
+      .persist();
+
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .get(`/cards/${card2.id}`)
+      .auth(token, { type: "bearer" })
+    
+    expect(status).toBe(HttpStatus.FORBIDDEN);
+  });
+
+  it("GET /cards/:id => should respond with status 404 for invalid cardId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const card = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .persist();
+
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .get(`/cards/${card.id + 1}`)
+      .auth(token, { type: "bearer" })
+    
+    expect(status).toBe(HttpStatus.NOT_FOUND);
+  });
+
+  it("DELETE /cards/:id => should respond with the card for given cardId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const card = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .persist();
+
+    const cardBuilt = new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .build();
+
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .delete(`/cards/${card.id}`)
+      .auth(token, { type: "bearer" })
+    
+    expect(status).toBe(HttpStatus.OK);
+  });
+
+  it("DELETE /cards/:id => should respond with status 403 for others user cardId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const user2 = await new Userfactory(prisma)
+      .withEmail("teste2@teste2.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const card = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .persist();
+
+    const cardBuilt = new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .build();
+  
+    const card2 = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user2.id)
+      .persist();
+
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .delete(`/cards/${card2.id}`)
+      .auth(token, { type: "bearer" })
+    
+    expect(status).toBe(HttpStatus.FORBIDDEN);
+  });
+
+  it("DELETE /cards/:id => should respond with status 404 for invalid cardId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const card = await new CardsFactory(prisma)
+      .withTitle("Americanas")
+      .withName("cleiver")
+      .withNumber("1111111111111111")
+      .withExpirationDate("2030-10")
+      .withCvv("123")
+      .withPassword("123456")
+      .withIsVirtual(false)
+      .withType("CREDIT")
+      .withUserId(user.id)
+      .persist();
+
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .delete(`/cards/${card.id + 1}`)
+      .auth(token, { type: "bearer" })
+    
+    expect(status).toBe(HttpStatus.NOT_FOUND);
   });
 
 });
