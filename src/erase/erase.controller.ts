@@ -1,8 +1,7 @@
 import { BadRequestException, Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
-import { CreateCardDto } from 'src/cards/dto/create-card.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { EraseService } from './erase.service';
-import { User } from 'src/decorators/user.decorator';
+import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
 import { EraseUserDataDto } from './dtos/erase-user-data-dto';
 
