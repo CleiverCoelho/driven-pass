@@ -4,12 +4,10 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { E2EUtils } from './utils/e2e-utils';
 import { PrismaService } from '../src/prisma/prisma.service';
-import { CredentialFactory } from './factories/credentials.factory';
 import { Userfactory } from './factories/user.factory';
 import { AuthFactory } from './factories/auth.factory';
 import { JwtService } from '@nestjs/jwt';
 import { NotesFactory } from './factories/notes.factory';
-import exp from 'constants';
 
 describe('Notes E2E Tests', () => {
   let app: INestApplication;

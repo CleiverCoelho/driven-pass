@@ -1,8 +1,8 @@
 {
-  "name": "tweetero-nest",
+  "name": "driven-pass-nest",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Cleiver Coelho Florenzano",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
