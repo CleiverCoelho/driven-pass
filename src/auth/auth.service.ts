@@ -40,7 +40,7 @@ export class AuthService {
       expiresIn: this.EXPIRATION_TIME, // por quanto tempo isso aqui é válido? [OPT]
       subject: String(id), // de quem é esse token? id [OPT]
       issuer: this.ISSUER, // quem tá emitindo esse token lindão? // driven [OPT]
-      audience: this.AUDIENCE // pra qual serviço esse token está sendo gerado? // users [OPT]
+      audience: this.AUDIENCE, // pra qual serviço esse token está sendo gerado? // users [OPT]
     })
 
     return { token };

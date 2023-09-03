@@ -42,7 +42,7 @@ export class CredentialFactory {
 
   build() {
     return {
-      password: this.cryptr.encrypt(this.password),
+      password: this.password,
       username: this.username,
       url: this.url,
       title: this.title

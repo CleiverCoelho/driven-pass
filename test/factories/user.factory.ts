@@ -17,6 +17,13 @@ export class Userfactory {
     return this;
   }
 
+  build() {
+    return {
+      password: this.password,
+      email: this.email,
+    }
+  }
+
   async signUp() {
     return await this.prisma.user.create({
       data: {

@@ -1,15 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { E2EUtils } from './utils/e2e-utils';
 import { PrismaService } from '../src/prisma/prisma.service';
-import { CreateCredentialDto } from 'src/credentials/dto/create-credential.dto';
 import { CredentialFactory } from './factories/credentials.factory';
+import { Userfactory } from './factories/user.factory';
+import { AuthFactory } from './factories/auth.factory';
+import { JwtService } from '@nestjs/jwt';
 
 describe('Credentials E2E Tests', () => {
   let app: INestApplication;
   let prisma: PrismaService = new PrismaService();
+  let jwtService : JwtService = new JwtService();
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -33,24 +36,29 @@ describe('Credentials E2E Tests', () => {
 
   it("POST /credentials => should create a credential", async () => {
     // setup
-    const credential = await new CredentialFactory(prisma)
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const credential = new CredentialFactory(prisma)
       .withTitle("Facebook")
       .withUsername("cleiver")
       .withPassword("123456")
       .withUrl("https://facebook.com")
-      .withUserId(1)
-      .persist();
+      .withUserId(user.id)
+      .build();
 
-    // body
-    const mediaDto: CreateMediaDto = new CreateMediaDto({
-      title: "Facebook",
-      username: "test@test.com"
-    });
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
 
     await request(app.getHttpServer())
-      .post('/medias')
-      .send(mediaDto)
-      .expect(HttpStatus.CONFLICT)
+      .post('/credentials')
+      .auth(token, { type: "bearer" })
+      .send(credential)
+      .expect(HttpStatus.CREATED);
   });
 
   // it("POST /medias => should not create a media with properties missing", async () => {

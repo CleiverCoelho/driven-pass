@@ -7,12 +7,11 @@ export class AuthFactory {
   private email: string;
 
   private EXPIRATION_TIME = "2 days";
-  private ISSUER = "DrivenTest";
-  private AUDIENCE = "test";
+  private ISSUER = "Driven";
+  private AUDIENCE = "users";
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly prisma: PrismaService
   ) { }
 
   withEmail(email: string) {
@@ -20,7 +19,7 @@ export class AuthFactory {
     return this;
   }
 
-  withIdl(id: number) {
+  withId(id: number) {
     this.id = id;
     return this;
   }
@@ -30,7 +29,8 @@ export class AuthFactory {
       expiresIn: this.EXPIRATION_TIME, // por quanto tempo isso aqui é válido? [OPT]
       subject: String(this.id), // de quem é esse token? id [OPT]
       issuer: this.ISSUER, // quem tá emitindo esse token lindão? // driven [OPT]
-      audience: this.AUDIENCE // pra qual serviço esse token está sendo gerado? // users [OPT]
+      audience: this.AUDIENCE, // pra qual serviço esse token está sendo gerado? // users [OPT]
+      secret: process.env.JWT_SECRET
     })
 
     return { token }
