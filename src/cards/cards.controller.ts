@@ -4,9 +4,10 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma} from '@prisma/client';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("cards")
+@ApiBearerAuth()
 @Controller('cards')
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}

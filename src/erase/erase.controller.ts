@@ -4,9 +4,10 @@ import { EraseService } from './erase.service';
 import { User } from '../decorators/user.decorator';
 import { User as UserPrisma } from '@prisma/client';
 import { EraseUserDataDto } from './dtos/erase-user-data-dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("erase")
+@ApiBearerAuth()
 @Controller('erase')
 export class EraseController {
     constructor(private readonly eraseService: EraseService) { }
