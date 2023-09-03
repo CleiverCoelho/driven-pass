@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { User } from '@prisma/client';
 import Cryptr from 'cryptr';
@@ -16,9 +16,11 @@ export class CardsService {
 
 
   async create(createCardDto: CreateCardDto, user : User) {
-    const { title, expirationDate } = createCardDto;
+    const { title, expirationDate, type } = createCardDto;
     const { id } = user;
     
+    if(type !== "CREDIT" && type !== "DEBIT" && type !== "BOTH") throw new BadRequestException();
+
     const todaysDate = new Date();
     if(new Date(expirationDate) < todaysDate) throw new HttpException("Invalid past date", HttpStatus.BAD_REQUEST);
 

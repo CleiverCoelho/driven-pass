@@ -1,5 +1,6 @@
 import { CardTypes } from "@prisma/client"
-import { IsBoolean, IsDate, IsDateString, IsISO8601, IsNotEmpty, IsNumberString, IsString, Length, Matches, isDate } from "class-validator"
+import { doesNotMatch } from "assert"
+import { IsBoolean, IsDate, IsDateString, IsISO8601, IsNotEmpty, IsNumberString, IsString, Length, Matches, isDate, matches } from "class-validator"
 
 export class CreateCardDto {
     @IsString()
@@ -33,7 +34,6 @@ export class CreateCardDto {
     isVirtual : boolean
 
     @IsString()
-    @Matches('DEBIT' || 'CREDIT' || 'BOTH')
     @IsNotEmpty()
     type : CardTypes
 }
