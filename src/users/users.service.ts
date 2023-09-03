@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import CreateUserDto from './dtos/login.dto';
 import { UsersRepository } from './users.repository';
+import { ApiTags } from '@nestjs/swagger';
 
 @Injectable()
 export class UsersService {

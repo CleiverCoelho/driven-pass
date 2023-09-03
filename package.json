@@ -19,7 +19,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:load-envs": "dotenv -e .env.test",
     "test:prisma": "npm run test:load-envs prisma migrate deploy",
-    "test:e2e": "npm run test:load-envs -- jest -- --runInBand --config ./test/jest-e2e.json"
+    "test:e2e": "npm run test:load-envs -- jest -- --runInBand --config ./test/jest-e2e.json",
+    "prisma:prod": "npx prisma migrate deploy",
+    "prisma:prod:seed": "npx prisma db seed"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -27,6 +32,7 @@
     "@nestjs/jwt": "^10.1.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^7.1.10",
     "@prisma/client": "^5.2.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
