@@ -61,15 +61,123 @@ describe('Credentials E2E Tests', () => {
       .expect(HttpStatus.CREATED);
   });
 
-  // it("POST /medias => should not create a media with properties missing", async () => {
-  //   // setup
-  //   const mediaDto = new CreateMediaDto(); // missing name on purpose
+  it("POST /credentials => should not create a credential with title already in use", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
-  //   await request(app.getHttpServer())
-  //     .post('/medias')
-  //     .send(mediaDto)
-  //     .expect(HttpStatus.BAD_REQUEST)
-  // });
+    const credential = new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .persist();
+
+    const conflitCredential = new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .build();
+    
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    await request(app.getHttpServer())
+      .post('/credentials')
+      .auth(token, { type: "bearer" })
+      .send(conflitCredential)
+      .expect(HttpStatus.CONFLICT);
+  });
+
+  it("GET /credentials => should return all credentials with given token", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const user2 = await new Userfactory(prisma)
+      .withEmail("teste2@teste2.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const credential = new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .persist();
+
+    const credential2 = new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user2.id)
+      .persist();
+      
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .get('/credentials')
+      .auth(token, { type: "bearer" });
+    expect(status).toBe(HttpStatus.OK);
+    expect(body).toHaveLength(1);
+
+  });
+
+  it("GET /credentials/:id => should return only the credential with given id", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const user2 = await new Userfactory(prisma)
+      .withEmail("teste2@teste2.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+
+    const credential = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .persist();
+
+    const credential2 = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user2.id)
+      .persist();
+      
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
+
+    const { status, body } = await request(app.getHttpServer())
+      .get(`/credentials/${(credential).id}`)
+      .auth(token, { type: "bearer" });
+    expect(status).toBe(HttpStatus.OK);
+    expect(body).toEqual(credential);
+
+  });
+
 
   // it("GET /medias => should get all medias", async () => {
   //   // setup
