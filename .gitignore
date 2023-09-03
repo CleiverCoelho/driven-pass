@@ -13,6 +13,7 @@ lerna-debug.log*
 
 #.envs
 .env
+.env.test
 
 # OS
 .DS_Store
