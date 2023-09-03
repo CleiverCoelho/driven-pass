@@ -4,6 +4,8 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { E2EUtils } from './utils/e2e-utils';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { CreateCredentialDto } from 'src/credentials/dto/create-credential.dto';
+import { CredentialFactory } from './factories/credentials.factory';
 
 describe('Credentials E2E Tests', () => {
   let app: INestApplication;
@@ -29,46 +31,27 @@ describe('Credentials E2E Tests', () => {
     await prisma.$disconnect();
   })
 
-  // it('POST /medias => should create a media', async () => {
-  //   // body
-  //   const mediaDto: CreateMediaDto = new CreateMediaDto({
-  //     title: "Facebook",
-  //     username: "test@test.com.br"
-  //   });
+  it("POST /credentials => should create a credential", async () => {
+    // setup
+    const credential = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(1)
+      .persist();
 
-  //   await request(app.getHttpServer())
-  //     .post('/medias')
-  //     .send(mediaDto)
-  //     .expect(HttpStatus.CREATED)
+    // body
+    const mediaDto: CreateMediaDto = new CreateMediaDto({
+      title: "Facebook",
+      username: "test@test.com"
+    });
 
-  //   const medias = await prisma.media.findMany();
-  //   expect(medias).toHaveLength(1);
-  //   const media = medias[0];
-  //   expect(media).toEqual({
-  //     id: expect.any(Number),
-  //     title: mediaDto.title,
-  //     username: mediaDto.username
-  //   })
-  // });
-
-  // it("POST /medias => should not create a media with information that already exists", async () => {
-  //   // setup
-  //   await new MediaFactory(prisma)
-  //     .withTitle("Facebook")
-  //     .withUsername("test@test.com")
-  //     .persist();
-
-  //   // body
-  //   const mediaDto: CreateMediaDto = new CreateMediaDto({
-  //     title: "Facebook",
-  //     username: "test@test.com"
-  //   });
-
-  //   await request(app.getHttpServer())
-  //     .post('/medias')
-  //     .send(mediaDto)
-  //     .expect(HttpStatus.CONFLICT)
-  // });
+    await request(app.getHttpServer())
+      .post('/medias')
+      .send(mediaDto)
+      .expect(HttpStatus.CONFLICT)
+  });
 
   // it("POST /medias => should not create a media with properties missing", async () => {
   //   // setup
