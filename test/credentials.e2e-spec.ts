@@ -149,6 +149,7 @@ describe('Credentials E2E Tests', () => {
       .withPassword("S3nhaF0rt3!")
       .signUp();
 
+    // persist() retorna a senha no banco já criptografada
     const credential = await new CredentialFactory(prisma)
       .withTitle("Facebook")
       .withUsername("cleiver")
@@ -174,161 +175,166 @@ describe('Credentials E2E Tests', () => {
       .get(`/credentials/${(credential).id}`)
       .auth(token, { type: "bearer" });
     expect(status).toBe(HttpStatus.OK);
-    expect(body).toEqual(credential);
+    // expect senha descriptografada
+    expect(body).toEqual({...credential, password: "123456"});
 
   });
 
+  it("GET /credentials/:id => should return with status 404 for invalid given credentialId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
-  // it("GET /medias => should get all medias", async () => {
-  //   // setup
-  //   await new MediaFactory(prisma)
-  //     .withTitle("Facebook")
-  //     .withUsername("test@test.com")
-  //     .persist();
+    const user2 = await new Userfactory(prisma)
+      .withEmail("teste2@teste2.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
-  //   await new MediaFactory(prisma)
-  //     .withTitle("Twitter")
-  //     .withUsername("test@test.com")
-  //     .persist();
+    // persist() retorna a senha no banco já criptografada
+    const credential = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .persist();
+      
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
 
-  //   const { status, body } = await request(app.getHttpServer()).get("/medias");
-  //   expect(status).toBe(HttpStatus.OK);
-  //   expect(body).toHaveLength(2);
-  // });
+    const { status, body } = await request(app.getHttpServer())
+      .get(`/credentials/${(credential).id + 1}`)
+      .auth(token, { type: "bearer" });
+    expect(status).toBe(HttpStatus.NOT_FOUND);
 
-  // it("GET /medias/:id => should get specific medias", async () => {
-  //   // setup
-  //   const facebook = await new MediaFactory(prisma)
-  //     .withTitle("Facebook")
-  //     .withUsername("test@test.com")
-  //     .persist();
+  });
 
-  //   await new MediaFactory(prisma)
-  //     .withTitle("Twitter")
-  //     .withUsername("test@test.com")
-  //     .persist();
+  it("GET /credentials/:id => should return with ststus 403 for others user credentialId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
-  //   const { status, body } = await request(app.getHttpServer()).get(`/medias/${facebook.id}`);
-  //   expect(status).toBe(HttpStatus.OK);
-  //   expect(body).toEqual({
-  //     id: expect.any(Number),
-  //     title: "Facebook",
-  //     username: "test@test.com"
-  //   })
-  // });
+    const user2 = await new Userfactory(prisma)
+      .withEmail("teste2@teste2.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
+    const credential2 = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user2.id)
+      .persist();
+      
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
 
-  // it("GET /medias/:id => should get an error when specific media does not exist", async () => {
-  //   const { status } = await request(app.getHttpServer()).get(`/medias/9999`);
-  //   expect(status).toBe(HttpStatus.NOT_FOUND);
-  // });
+    const { status, body } = await request(app.getHttpServer())
+      .get(`/credentials/${(credential2).id}`)
+      .auth(token, { type: "bearer" });
+    expect(status).toBe(HttpStatus.FORBIDDEN);
 
-  // it('PUT /medias => should update a media', async () => {
-  //   // setup
-  //   const facebook = await new MediaFactory(prisma)
-  //     .withTitle("Facebook")
-  //     .withUsername("test@test.com")
-  //     .persist();
+  });
 
-  //   // body
-  //   const mediaDto: CreateMediaDto = new CreateMediaDto();
-  //   mediaDto.title = "Meta";
-  //   mediaDto.username = "test@test.com.br";
+  it("DELETE /credentials/:id => should return with ststus 200 and delete for valid credentialId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
-  //   await request(app.getHttpServer())
-  //     .put(`/medias/${facebook.id}`)
-  //     .send(mediaDto)
-  //     .expect(HttpStatus.OK)
+    const credential = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .persist();
+      
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
 
-  //   const medias = await prisma.media.findMany();
-  //   expect(medias).toHaveLength(1);
-  //   const media = medias[0];
-  //   expect(media).toEqual({
-  //     id: expect.any(Number),
-  //     title: mediaDto.title,
-  //     username: mediaDto.username
-  //   })
-  // });
+    const { status, body } = await request(app.getHttpServer())
+      .delete(`/credentials/${(credential).id}`)
+      .auth(token, { type: "bearer" });
+    expect(status).toBe(HttpStatus.OK);
 
-  // it('PUT /medias => should not update a media if the info already exists', async () => {
-  //   // setup
-  //   const facebook = await new MediaFactory(prisma)
-  //     .withTitle("Facebook")
-  //     .withUsername("test@test.com")
-  //     .persist();
+  });
 
-  //   await new MediaFactory(prisma)
-  //     .withTitle("Twitter")
-  //     .withUsername("test@test.com")
-  //     .persist();
+  it("DELETE /credentials/:id => should return with ststus 403 for others user credentialId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
+    
+      const user2 = await new Userfactory(prisma)
+      .withEmail("teste2@teste2.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
-  //   // body
-  //   const mediaDto: UpdateMediaDto = new UpdateMediaDto({
-  //     title: "Twitter",
-  //     username: "test@test.com"
-  //   });
+    const credential = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .persist();
 
-  //   await request(app.getHttpServer())
-  //     .put(`/medias/${facebook.id}`)
-  //     .send(mediaDto)
-  //     .expect(HttpStatus.CONFLICT)
-  // });
+    const credential2 = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user2.id)
+      .persist();
+      
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
 
-  // it('PUT /medias => should not update a media if does not exist', async () => {
-  //   // body
-  //   const mediaDto: UpdateMediaDto = new UpdateMediaDto({
-  //     title: "Twitter",
-  //     username: "test@test.com"
-  //   });
+    const { status, body } = await request(app.getHttpServer())
+      .delete(`/credentials/${(credential2).id}`)
+      .auth(token, { type: "bearer" });
+    expect(status).toBe(HttpStatus.FORBIDDEN);
+  });
 
-  //   await request(app.getHttpServer())
-  //     .put(`/medias/9999`)
-  //     .send(mediaDto)
-  //     .expect(HttpStatus.NOT_FOUND)
-  // });
+  it("DELETE /credentials/:id => should return with ststus 404 for invalid credentialId", async () => {
+    // setup
+    const user = await new Userfactory(prisma)
+      .withEmail("teste@teste.com")
+      .withPassword("S3nhaF0rt3!")
+      .signUp();
 
-  // it('DELETE /medias => should delete a media', async () => {
-  //   // setup
-  //   const media = await new MediaFactory(prisma)
-  //     .withTitle("Facebook")
-  //     .withUsername("test@test.com")
-  //     .persist();
+    const credential = await new CredentialFactory(prisma)
+      .withTitle("Facebook")
+      .withUsername("cleiver")
+      .withPassword("123456")
+      .withUrl("https://facebook.com")
+      .withUserId(user.id)
+      .persist();
+      
+    const { token } = new AuthFactory(jwtService)
+      .withEmail("teste@teste.com")
+      .withId(user.id)
+      .signIn();
 
-  //   await request(app.getHttpServer())
-  //     .delete(`/medias/${media.id}`)
-  //     .expect(HttpStatus.OK);
+    const { status, body } = await request(app.getHttpServer())
+      .delete(`/credentials/${(credential).id + 1}`)
+      .auth(token, { type: "bearer" });
+    expect(status).toBe(HttpStatus.NOT_FOUND);
 
-  //   const medias = await prisma.media.findMany();
-  //   expect(medias).toHaveLength(0);
-  // });
-
-  // it('DELETE /medias => should not delete a media if does not exist', async () => {
-  //   await request(app.getHttpServer())
-  //     .delete(`/medias/9999`)
-  //     .expect(HttpStatus.NOT_FOUND);
-  // });
-
-  // it('DELETE /medias => should not delete a media if scheduled or published', async () => {
-  //   // setup
-  //   const media = await new MediaFactory(prisma)
-  //     .withTitle("Facebook")
-  //     .withUsername("test@test.com")
-  //     .persist();
-
-  //   const post = await new PostFactory(prisma)
-  //     .withText("Testing is fun!")
-  //     .withTitle("Testing is fun!")
-  //     .persist();
-
-  //   await new PublicationFactory(prisma)
-  //     .withMediaId(media.id)
-  //     .withPostId(post.id)
-  //     .withDate(new Date())
-  //     .persist();
-
-  //   await request(app.getHttpServer())
-  //     .delete(`/medias/${media.id}`)
-  //     .expect(HttpStatus.FORBIDDEN);
-  // });
-
+  });
 });
