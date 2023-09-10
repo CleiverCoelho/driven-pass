@@ -33,8 +33,11 @@ You can also access the documentation, built using Swagger, by navigating to the
 ## Installation
 
 ```bash
+$ git clone https://github.com/lucasnerism/drivenpass-nest
+$ cd drivenpass-nest
 $ npm install
 ```
+
 ## Running the app
 
 Create a .env.dev and .env.test file on the root of the project
