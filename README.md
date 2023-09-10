@@ -33,7 +33,7 @@ You can also access the documentation, built using Swagger, by navigating to the
 ## Installation
 
 ```bash
-$ git clone https://github.com/cleivercoelho/drivenpass-nest
+$ git clone https://github.com/cleivercoelho/driven-pass
 $ cd drivenpass-nest
 $ npm install
 ```
