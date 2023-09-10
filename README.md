@@ -27,6 +27,42 @@ You can also access the documentation, built using Swagger, by navigating to the
   <img style='margin: 5px;' src="https://img.shields.io/badge/Jest-C21325.svg?style=for-the-badge&logo=Jest&logoColor=white"/>
 </p>
 
-## API link Deploy: https://nest-pass.onrender.com
+## Installation
 
-## API link Documentation using Swagger: https://nest-pass.onrender.com/api
+```bash
+$ npm install
+```
+## Running the app
+
+Create a .env.dev and .env.test file on the root of the project
+```bash
+DATABASE_URL="postgresql://username:your_password@localhost:5432/driven-pass-db?schema=public"
+JWT_SECRET=your_jwt_secret
+CRYPT_SECRET=your_crypt_secret
+```
+
+Run prisma migrations to create all the database tables, constraints and configs
+```bash
+$ npx prisma generate
+$ npx prisma migrate dev
+$ npm run test:prisma
+```
+
+How to run
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+```
+
+How to test
+```bash
+# e2e-integration tests
+$ npm run test:e2e
+```
+
+## Author
+
+- Cleiver Coelho Florenzano
