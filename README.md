@@ -7,13 +7,13 @@ You can also access the documentation, built using Swagger, by navigating to the
 
 ## About
 
-- [ ] I used PrismaORM to manage the database, migrations, and execute necessary queries.
-- [ ] I implemented a repository layer - outside the Nest service pattern to structure the application in layers - to handle database access.
-- [ ] I divided the code into modules (`@Modules`) and created one for each of the entities: Notes, Cards, Credentials, Users, Auth, separately.
-- [ ] For the login session on the `'users/sign-in'` route, I used JWT Token verification.
-- [ ] All routes, except for login and registration, are authenticated using unique user tokens.
-- [ ] I encrypted all sensitive data for registration and credentials stored in the database.
-- [ ] I have Automated Integration Tests with code coverage of over 80%, using design patterns with factories.
+- [x] I used PrismaORM to manage the database, migrations, and execute necessary queries.
+- [x] I implemented a repository layer - outside the Nest service pattern to structure the application in layers - to handle database access.
+- [x] I divided the code into modules (`@Modules`) and created one for each of the entities: Notes, Cards, Credentials, Users, Auth, separately.
+- [x] For the login session on the `'users/sign-in'` route, I used JWT Token verification.
+- [x] All routes, except for login and registration, are authenticated using unique user tokens.
+- [x] I encrypted all sensitive data for registration and credentials stored in the database.
+- [x] I have Automated Integration Tests with code coverage of over 80%, using design patterns with factories.
 
 
 ## API link Deploy: https://nest-pass.onrender.com
