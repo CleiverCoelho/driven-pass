@@ -16,6 +16,17 @@ You can also access the documentation, built using Swagger, by navigating to the
 - [x] I have Automated Integration Tests with code coverage of over 80%, using design patterns with factories.
 
 
+## Main Technologies
+<p>
+  <img style='margin: 5px;' src="https://img.shields.io/badge/PostgreSQL-4169E1.svg?style=for-the-badge&logo=PostgreSQL&logoColor=white"/>
+   <img style='margin: 5px;' src="https://img.shields.io/badge/Prisma-2D3748.svg?style=for-the-badge&logo=Prisma&logoColor=white"/>
+  <img style='margin: 5px;' src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white"/>
+  <img style='margin: 5px;' src='https://img.shields.io/badge/NestJS-E0234E.svg?style=for-the-badge&logo=NestJS&logoColor=white'>
+  <img style='margin: 5px;' src="https://img.shields.io/badge/.ENV-ECD53F.svg?style=for-the-badge&logo=dotenv&logoColor=black"/>
+  <img style='margin: 5px;' src="https://img.shields.io/badge/Swagger-85EA2D.svg?style=for-the-badge&logo=Swagger&logoColor=black"/>
+  <img style='margin: 5px;' src="https://img.shields.io/badge/Jest-C21325.svg?style=for-the-badge&logo=Jest&logoColor=white"/>
+</p>
+
 ## API link Deploy: https://nest-pass.onrender.com
 
 ## API link Documentation using Swagger: https://nest-pass.onrender.com/api
