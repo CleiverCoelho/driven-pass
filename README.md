@@ -5,6 +5,9 @@ Backend application developed in NestJs for web credentials management. Here, yo
 Try it out now on the API deploy: https://nest-pass.onrender.com <br/> <br/>
 You can also access the documentation, built using Swagger, by navigating to the `'/api'` route on the link above, clicking [here](https://nest-pass.onrender.com/api), or locally by following the steps to run the application on your machine, described below.
 
+## Documentation
+![image](https://github.com/CleiverCoelho/driven-pass/assets/102709370/2f7d9ba4-1191-4a0d-80cb-8c97e45ae550)
+
 ## About
 
 - [x] I used PrismaORM to manage the database, migrations, and execute necessary queries.
